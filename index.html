@@ -1301,13 +1301,6 @@
   @keyframes finRing{0%{box-shadow:0 0 0 0 rgba(255,255,255,.5)}70%,100%{box-shadow:0 0 0 20px rgba(255,255,255,0)}}
   #s1x .fin .ftrust{margin-top:20px;font-size:13.5px;color:#B9E2D8;font-weight:650}
   #s1x .fin .ftrust b{color:#fff}
-  #s1x .fin .fask{display:inline-flex;align-items:center;gap:10px;margin:16px auto 0;padding:11px 20px;
-    border-radius:14px;text-decoration:none;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.30);
-    color:#EAF7F3;font-size:14px;font-weight:700;line-height:1.35;transition:background .15s,border-color .15s,transform .15s}
-  #s1x .fin .fask:hover{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.55);transform:translateY(-1px)}
-  #s1x .fin .fask .kdot{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;
-    border-radius:7px;background:#FEE500;font-size:13px}
-  #s1x .fin .fask b{color:#fff;font-weight:800}
   #s1x .fin .fnote{max-width:600px;margin:18px auto 0;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.22);
     border-radius:12px;padding:12px 17px;font-size:13px;line-height:1.7;color:#CDEDE5;font-weight:600}
   #s1x .fin .fnote b{color:#fff}
@@ -1597,7 +1590,7 @@
 
   <a class="fcta" href="#" onclick="installClick(event)">다운로드 후 우리치과 환자 목록 확인하기 <span class="arw">→</span></a>
   <div class="ftrust">🔒 차트는 <b>읽기만</b> · <b>앱이 100만 원 벌어드릴 때까지 무료</b> · 저장·전송 없음</div>
-  <div style="text-align:center"><a class="fask" href="https://open.kakao.com/o/sHsIVfD" target="_blank" rel="noopener"><span class="kdot">💬</span><span>설치 전 궁금한 점 있으세요? <b>1:1 오픈채팅으로 물어보기</b></span></a></div>
+  <div style="text-align:center;margin-top:13px"><a class="kakbtn" href="https://open.kakao.com/o/sHsIVfD" target="_blank" rel="noopener"><span class="ki">💬</span>1:1 오픈채팅 문의</a></div>
   <div class="fnote">
     <div class="fr"><span class="fi">🖥️</span><span>설치는 <b>덴트웹 서버 컴퓨터</b>에 진행해야 <b>덴트웹 기반</b>으로 진단할 수 있습니다</span></div>
     <div class="fr"><span class="fi">🔒</span><span>프로그램은 서버 안 <b>격리된 공간</b>에서만 실행됩니다</span></div>
@@ -2482,12 +2475,27 @@ function installClick(e){
   50%{box-shadow:0 0 0 6px rgba(14,124,107,.16),0 16px 46px rgba(14,124,107,.44);transform:scale(1.025)}}
 @keyframes dlfabBob{0%,100%{transform:translateY(-1px)}50%{transform:translateY(2px)}}
 @media print{#dlFab{display:none!important}}
+/* ── 공용 작은 카카오 오픈채팅 버튼 ── */
+.kakbtn{display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+  background:#FEE500;color:#3C1E1E;font-weight:800;font-size:12.5px;line-height:1;
+  padding:8px 13px;border-radius:11px;box-shadow:0 4px 14px rgba(0,0,0,.18);
+  font-family:Pretendard,-apple-system,BlinkMacSystemFont,'Segoe UI','Malgun Gothic',sans-serif;
+  white-space:nowrap;transition:transform .15s,box-shadow .15s}
+.kakbtn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.24)}
+.kakbtn .ki{font-size:1.15em}
+/* ── 왼쪽 다운로드 FAB 짝꿍(작은 카톡 문의) — FAB와 함께 등장 ── */
+#askFab{position:fixed;left:16px;z-index:2147481000;opacity:0;transform:translateX(-26px);
+  pointer-events:none;transition:opacity .5s ease,transform .5s ease}
+#askFab.on{opacity:1;transform:translateX(0);pointer-events:auto}
+@media print{#askFab{display:none!important}}
 </style>
 <a id="dlFab" href="#" onclick="installClick(event)" aria-label="AutoRecall 설치파일 다운로드"><span class="beat"><span class="l1"><span class="ic">⬇</span>다운로드 후</span><span class="l2">우리치과 환자 목록 확인하기</span></span></a>
+<a id="askFab" class="kakbtn" href="https://open.kakao.com/o/sHsIVfD" target="_blank" rel="noopener" aria-label="1:1 오픈채팅 문의"><span class="ki">💬</span>1:1 문의</a>
 <script>
 (function(){
   var fab=document.getElementById('dlFab');
   if(!fab) return;
+  var ask=document.getElementById('askFab');
   /* 다운로드로 이어지는 버튼(히어로 iframe 포함)이 화면에 하나라도 보이면 숨김 — rect 직접 계산이라 어디서든 확실 */
   function anyDlBtnVisible(){
     var ts=document.querySelectorAll('iframe[src^="07B"], a[onclick*="installClick"]:not(#dlFab)');
@@ -2497,7 +2505,11 @@ function installClick(e){
     }
     return false;
   }
-  function upd(){ fab.classList.toggle('on', !anyDlBtnVisible()); }
+  function upd(){
+    var vis=!anyDlBtnVisible();
+    fab.classList.toggle('on', vis);
+    if(ask){ var r=fab.getBoundingClientRect(); ask.style.top=(r.bottom+8)+'px'; ask.classList.toggle('on', vis); }
+  }
   var tick=false;
   window.addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(function(){ tick=false; upd(); }); } }, {passive:true});
   window.addEventListener('resize', upd);
